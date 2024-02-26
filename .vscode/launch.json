@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lua-local",
+      "request": "launch",
+      "name": "Love2D Debug",
+      "program": {
+        "command": "love"
+      },
+      "args": [
+        "${workspaceFolder}",
+        "debug"
+      ],
+      "stopOnEntry": true,
+      "verbose": true
+    }
+  ]
+}
