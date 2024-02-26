@@ -12,7 +12,7 @@
         "${workspaceFolder}",
         "debug"
       ],
-      "stopOnEntry": true,
+      "stopOnEntry": false,
       "verbose": true
     }
   ]

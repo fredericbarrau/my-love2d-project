@@ -1,40 +1,53 @@
 -- Player entity
 local Player = {
-    x = 20,
-    y = 40,
-    width = 15,
-    height = 100,
+    width = 100,
+    height = 12,
     colorR = 255,
     colorG = 255,
     colorB = 255,
     speed = 150,
 
-    min_y = 0,
-    max_y = nil,
+    margin_x = 5,  -- invisible margin left and right of the pad
+    margin_y = 20, -- invisible margin up and down of the pad
 
-    key_up = "up",
-    key_down = "down",
+    key_left = "left",
+    key_right = "right",
 
     player_num = 1,
 }
+-- Min & Max X position for the horizontal mouvement
+Player.min_x = Player.margin_x
+Player.max_x = love.graphics.getWidth() - Player.width - Player.margin_x
+
 Player.__index = Player
 
 -- Constructor
 function Player.new(self, player_num)
     self = setmetatable({}, Player)
     self.player_num = player_num
+    -- Initial x & y position
+    self.x = love.graphics.getWidth() / 2 - self.width / 2 + self.margin_x
+    self.y = self.margin_x + self.height / 2
+    if self.player_num == 2 then
+        self.y = love.graphics.getHeight() - self.height - self.margin_y
+        self:setKeys("q", "s")
+    end
     return self
 end
 
 -- Update player position
 function Player:update(dt)
-    if love.keyboard.isDown(self.key_up) then
-        if self.y >= 0 then
-            self.y = self.y - self.speed * dt
+    if love.keyboard.isDown(self.key_left) then
+        if self.x >= self.min_x then
+            self.x = self.x - self.speed * dt
+        else
+            self.x = self.min_x
         end
-    elseif love.keyboard.isDown(self.key_down) then
-        if (self.y + self.height) <= self.max_y then
-            self.y = self.y + self.speed * dt
+    elseif love.keyboard.isDown(self.key_right) then
+        if self.x <= self.max_x then
+            self.x = self.x + self.speed * dt
+        else
+            self.x = self.max_x
         end
     end
 end
@@ -47,13 +60,8 @@ end
 
 -- Helpers
 
-function Player:load(window_width, window_height)
-    self.max_y = window_height -- boudaries for mouvement
-    if self.player_num == 1 then
-        self:setPosition(20, window_height / 2 - self.height / 2)
-    else
-        self:setPosition(window_width - 20, window_height / 2 - self.height / 2)
-    end
+function Player:load()
+    -- Load player assets
 end
 
 function Player:setColor(r, g, b)
@@ -67,9 +75,9 @@ function Player:setPosition(x, y)
     self.y = y
 end
 
-function Player:setKeys(up, down)
-    self.key_up = up
-    self.key_down = down
+function Player:setKeys(left, right)
+    self.key_left = left
+    self.key_right = right
 end
 
 -- Return the X pos of the ball when it is attached to the player's racket

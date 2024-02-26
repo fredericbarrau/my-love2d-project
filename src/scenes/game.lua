@@ -11,10 +11,8 @@ function Game:load()
     self.player2 = Player:new(2)
     -- Initial setup for Player1
     -- Load the player, and provide the window width and height from the love.graphics module
-    self.player1:load(love.graphics.getWidth(), love.graphics.getHeight())
-    self.player1:setKeys("a", "w")
-    self.player2:load(love.graphics.getWidth(), love.graphics.getHeight())
-    self.player2:setKeys("p", ":")
+    self.player1:load()
+    self.player2:load()
     -- Initial setup for the ball
     -- Ball:load(window_width, window_height, Player1:getBallStartupX(Ball.radius), Player1:getBallStartupY())
 end
