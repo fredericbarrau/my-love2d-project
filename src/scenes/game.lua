@@ -36,6 +36,9 @@ function Game:update(dt)
     -- Update the player
     Player1:update(dt)
     Player2:update(dt)
+
+    -- Update the ball
+    Ball:update(dt, self.current_launcher)
 end
 
 -- Draw the game scene

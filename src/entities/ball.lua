@@ -40,8 +40,9 @@ end
 function Ball:update(dt, control_player)
     -- Ball stuck on a player racket
     if (self.state == BallState.START) then
-        self.x = control_player.x + control_player.width / 2
-        self.y = control_player.y - self.radius
+        local position = control_player:getBallCenterPosition(self.radius)
+        self.x = position.x
+        self.y = position.y
     elseif (self.state == BallState.MOVING) then
         self:move()
     end
