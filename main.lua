@@ -15,9 +15,6 @@ end
 
 function love.update(dt)
    -- This function will run every frame and is where you can update the state of the game.
-   -- Player1:update(dt)
-   -- Player2:update(dt)
-   -- Ball:update(dt)
    game:update(dt)
 end
 
@@ -25,7 +22,6 @@ function love.draw()
    -- This function will also run every frame and is where you can draw things to the screen.
    -- love.graphics.print('Hello World!', 400, 300)
    game:draw()
-   -- Ball:draw()
 end
 
 -- Error management

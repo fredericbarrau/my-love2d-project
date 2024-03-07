@@ -20,20 +20,26 @@ local Player = {
 }
 
 -- Constructor
-function Player.new(self, player_num)
-	self = setmetatable({}, Player)
+function Player:new(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+	return o
+end
+
+function Player:init(player_num)
+	-- Player number
 	self.player_num = player_num
 	-- Min & Max X position for the horizontal mouvement
-	self.min_x = self.margin_x
-	self.max_x = love.graphics.getWidth() - self.width - self.margin_x
+	self.min_x      = self.margin_x
+	self.max_x      = love.graphics:getWidth() - self.width - self.margin_x
 	-- Initial x & y position
-	self.x = love.graphics.getWidth() / 2 - self.width / 2 + self.margin_x
-	self.y = self.margin_x + self.height / 2
+	self.x          = love.graphics:getWidth() / 2 - self.width / 2 + self.margin_x
+	self.y          = self.margin_x + self.height / 2
 	if self.player_num == 2 then
-		self.y = love.graphics.getHeight() - self.height - self.margin_y
+		self.y = love.graphics:getHeight() - self.height - self.margin_y
 		self:setKeys("q", "s")
 	end
-	return self
 end
 
 -- Update player position
@@ -53,7 +59,7 @@ function Player:update(dt)
 	elseif love.keyboard.isDown(self.key_shoot) and self.ball_launcher then
 		-- Launch the ball
 		-- Apply the movement vector to the ball
-		
+
 		self.ball_launcher = false
 	end
 end
@@ -65,10 +71,6 @@ function Player:draw()
 end
 
 -- Helpers
-
-function Player:load()
-	-- Load player assets
-end
 
 function Player:setColor(r, g, b)
 	self.colorR = r

@@ -8,14 +8,15 @@
 -- local endPoint = { x = 10, y = 10 }
 -- local entityMovement = EntityMovement:new(initialPoint, endPoint)
 --
-EntityMovement = {}
-EntityMovement.__index = EntityMovement
+local EntityMovement = {}
+
 
 -- Constructor
-function EntityMovement:new(initial_point, end_point)
-    local self = setmetatable({}, EntityMovement)
-    self.setEntityMovement(initial_point, end_point)
-    return self
+function EntityMovement:new(o)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    return o
 end
 
 -- Set EntityMovement
@@ -75,3 +76,5 @@ function EntityMovement:moveEntity(entity)
     end
     return x, y
 end
+
+return EntityMovement
