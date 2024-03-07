@@ -11,37 +11,40 @@ Game = {}
 -- Initialize the game scene
 function Game:load()
     -- Create a new player
-    self.player1 = Player:new()
-    self.player2 = Player:new()
+    Player1 = Player:new()
+    Player2 = Player:new()
 
-    self.player1:init(1)
-    self.player2:init(2)
+    Player1:init(1)
+    Player2:init(2)
 
-    self.current_starter = self.player1
+    self.current_starter = Player1
     -- Initial setup for Player1
 
     -- Initial player setup
-    self.player1:setBallLauncher(true)
-    self.current_launcher = self.player1.player_num
+    Player1:setBallLauncher(true)
+    self.current_launcher = Player1
 
-    self.player2:setKeys("a", "z")
+    Player2:setKeys("a", "z")
 
     -- Initial setup for the ball
-    -- Ball:load(window_width, window_height, Player1:getBallStartupX(Ball.radius), Player1:getBallStartupY())
+    local ball_initial_position = self.current_launcher:getBallCenterPosition(Ball.radius)
+    Ball:load(ball_initial_position.x, ball_initial_position.y)
 end
 
 -- Update the game scene
 function Game:update(dt)
     -- Update the player
-    self.player1:update(dt)
-    self.player2:update(dt)
+    Player1:update(dt)
+    Player2:update(dt)
 end
 
 -- Draw the game scene
 function Game:draw()
     -- Draw the player
-    self.player1:draw()
-    self.player2:draw()
+    Player1:draw()
+    Player2:draw()
+    -- Draw the ball
+    Ball:draw()
 end
 
 return Game

@@ -89,9 +89,21 @@ function Player:setKeys(left, right, shoot)
 	self.key_shoot = shoot
 end
 
--- Return the X pos of the ball when it is attached to the player's racket
-function Player:getBallStartupY()
-	return self.y + self.height / 2
+-- Return the X and Y pos of the racket
+function Player:getRacketHookPosition()
+	if self.player_num == 1 then
+		return { x = self.x + self.width / 2, y = self.y + self.height }
+	else
+		return { x = self.x + self.width / 2, y = self.y }
+	end
+end
+
+function Player:getBallCenterPosition(radius)
+	local center = self:getRacketHookPosition()
+	if self.player_num == 1 then
+		return { x = center.x, y = center.y + radius }
+	end
+	return { x = center.x, y = center.y - radius }
 end
 
 -- Set the ball launcher attribute: if true, the ball is attached to the plauyer's racket
