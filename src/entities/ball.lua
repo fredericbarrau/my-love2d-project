@@ -22,12 +22,13 @@ Ball = {
 
 -- Common methods for Love
 function Ball:load(x, y)
-    self.x = x
-    self.y = y
+    self:setX(x):setY(y)
+
     self.max_x = love.graphics.getWidth()
     self.max_y = love.graphics.getHeight()
     self.current_movement =
-        EntityMovement.new({ 0, 0, 0 }, { 0, 0, 0 })
+        EntityMovement:new()
+    self.current_movement:setEntityMovement({ x = 0, y = 0 })
 end
 
 function Ball:draw()
@@ -38,14 +39,16 @@ end
 --     Update the ball positions
 --     @param dt: delta times
 function Ball:update(dt, control_player)
+    local next_position
     -- Ball stuck on a player racket
     if (self.state == BallState.START) then
-        local position = control_player:getBallCenterPosition(self.radius)
-        self.x = position.x
-        self.y = position.y
+        next_position = control_player:getBallCenterPosition(self.radius)
+        -- self:setX(position.x):setY(position.y)
     elseif (self.state == BallState.MOVING) then
-        self:move()
+        -- Get the hypothetical next position
+        next_position = self:getNextPosition()
     end
+    return next_position
 end
 
 -- Helpers
@@ -55,20 +58,30 @@ end
 --
 -- Set the ball position, change the ball state and apply the entity movement vector
 function Ball:launched(control_player)
-    self.state = BallState.START
-    self.x = control_player.x + control_player.width / 2
-    self.y = control_player.y - self.radius
-    -- TODO: this will be the initial aiming vector
-    -- for now, it is static, but it will be dynamic, using the current
-    -- position of the player and the racket current movement
-    local target_x = self.x + 100
-    local target_y = self.y + 100
-    self.current_movement.setEntityMovement({ x = self.x, y = self.y }, { x = target_x, y = target_y })
+    if self.state == BallState.START then
+        -- TODO: this will be the initial aiming vector
+        -- for now, it is static, but it will be dynamic, using the current
+        -- position of the player and the racket current movement
+
+        self.current_movement:setEntityMovement( { x = 2, y = 2 })
+        self.state = BallState.MOVING
+    end
+end
+
+function Ball:setX(x)
+    self.x = math.floor(x)
+    return self
+end
+
+function Ball:setY(y --[[number]])
+    self.y = math.floor(y)
+    return self
 end
 
 -- Move the ball: calculate the new position depending of the current MovementVector
-function Ball:move()
-    self.current_movement.moveEntity(self)
+function Ball:getNextPosition()
+    local new_x, new_y = self.current_movement:moveEntity(self)
+    return { x = new_x, y = new_y }
 end
 
 return Ball, BallState

@@ -43,7 +43,7 @@ function Player:init(player_num)
 end
 
 -- Update player position
-function Player:update(dt)
+function Player:update(dt, ball)
 	if love.keyboard.isDown(self.key_left) then
 		if self.x >= self.min_x then
 			self.x = self.x - self.speed * dt
@@ -61,6 +61,9 @@ function Player:update(dt)
 		-- Apply the movement vector to the ball
 
 		self.ball_launcher = false
+
+		-- Default vector 100 px / update timestep
+		ball:launched(self)
 	end
 end
 
@@ -91,10 +94,12 @@ end
 
 -- Return the X and Y pos of the racket
 function Player:getRacketHookPosition()
+	-- adding a 1 pixel to the y position to avoid
+	-- a collision detection
 	if self.player_num == 1 then
-		return { x = self.x + self.width / 2, y = self.y + self.height }
+		return { x = self.x + self.width / 2, y = self.y + self.height + 1 }
 	else
-		return { x = self.x + self.width / 2, y = self.y }
+		return { x = self.x + self.width / 2, y = self.y - 1 }
 	end
 end
 
@@ -110,6 +115,25 @@ end
 function Player:setBallLauncher(ball_launcher)
 	self.ball_launcher = ball_launcher
 	return self.ball_launcher
+end
+
+-- Check if the ball has a collision with the player's racket
+function Player:hasCollision(next_position, ball)
+	-- Check the collision with the player 1
+	if self.player_num == 2 then
+		if next_position.y + ball.radius >= self.y then
+			if next_position.x >= self.x and next_position.x <= self.x + self.width then
+				return true
+			end
+		end
+	else
+		if next_position.y - ball.radius <= self.y + self.height then
+			if next_position.x >= self.x and next_position.x <= self.x + self.width then
+				return true
+			end
+		end
+	end
+	return false
 end
 
 return Player

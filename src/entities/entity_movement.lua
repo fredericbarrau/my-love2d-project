@@ -3,12 +3,9 @@
 -- It is used to calculate the speed and the direction of the entities
 -- It is used by the ball and the player entities
 --
--- This class assumes that the initial and endpoint are x,y coordinates
--- local initialPoint = {x = 0, y = 0}
--- local endPoint = { x = 10, y = 10 }
--- local entityMovement = EntityMovement:new(initialPoint, endPoint)
+-- local entityMovement = EntityMovement:new(coordinates)
 --
-local EntityMovement = {}
+local EntityMovement = { coordinates = { x = 0, y = 0 }, speed = 0, angle = 0 }
 
 
 -- Constructor
@@ -20,20 +17,19 @@ function EntityMovement:new(o)
 end
 
 -- Set EntityMovement
-function EntityMovement:setEntityMovement(initial_point, end_point)
-    self.initial_point = initial_point
-    self.end_point = end_point
+function EntityMovement:setEntityMovement(coordinates)
+    self.coordinates = coordinates
     self.speed = self:calculateSpeed()
 
-    local dx = self.end_point.x - self.initial_point.x
-    local dy = self.end_point.y - self.initial_point.y
+    local dx = self.coordinates.x
+    local dy = self.coordinates.y
     self.angle = math.atan2(dy, dx)
 end
 
 -- Calculate speed
 function EntityMovement:calculateSpeed()
-    local dx = self.endPoint.x - self.initialPoint.x
-    local dy = self.endPoint.y - self.initialPoint.y
+    local dx = self.coordinates.x
+    local dy = self.coordinates.y
     return math.sqrt(dx * dx + dy * dy)
 end
 
@@ -47,7 +43,7 @@ end
 function EntityMovement:moveEntity(entity)
     local x = entity.x + self.speed * math.cos(self.angle)
     local y = entity.y + self.speed * math.sin(self.angle)
-    -- Check if the entity has reached the bounderies of the screen
+    -- Check if the entity has reached the bounderies of the screen (left & right)
     if (x > love.graphics.getWidth() or x < 0) then
         -- Reverse the x direction
         self.angle = -self.angle
@@ -61,20 +57,12 @@ function EntityMovement:moveEntity(entity)
         -- Calculate the new x and y coordinates
         y = entity.y + self.speed * math.sin(self.angle)
     end
-    if (y > love.graphics.getHeight() or y < 0) then
-        -- Reverse the y direction
-        self.angle = -self.angle
-
-        -- Calculate the new x and y coordinates
-        y = entity.y + self.speed * math.sin(self.angle)
-
-        -- Reverse the speed
-        self.speed = -self.speed
-
-        -- Calculate the new x and y coordinates
-        x = entity.x + self.speed * math.cos(self.angle)
-    end
     return x, y
+end
+
+function EntityMovement:bounceX()
+    self.angle = -self.angle
+
 end
 
 return EntityMovement
