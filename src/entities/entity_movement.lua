@@ -43,26 +43,31 @@ end
 function EntityMovement:moveEntity(entity)
     local x = entity.x + self.speed * math.cos(self.angle)
     local y = entity.y + self.speed * math.sin(self.angle)
-    -- Check if the entity has reached the bounderies of the screen (left & right)
-    if (x > love.graphics.getWidth() or x < 0) then
-        -- Reverse the x direction
-        self.angle = -self.angle
-
-        -- Calculate the new x and y coordinates
-        x = entity.x + self.speed * math.cos(self.angle)
-
-        -- Reverse the speed
-        self.speed = -self.speed
-
-        -- Calculate the new x and y coordinates
-        y = entity.y + self.speed * math.sin(self.angle)
-    end
     return x, y
 end
 
-function EntityMovement:bounceX()
-    self.angle = -self.angle
+-- Manage the bounce of the entity on the x axis
+-- Change the entity movement vector to reflects the new movement after the bounce
+-- Return the new x and y of the entity after the bounce
 
+function EntityMovement:bounceX(entity)
+    local dx = -self.coordinates.x
+    local dy = self.coordinates.y
+
+    self:setEntityMovement({ x = dx, y = dy })
+    return self:moveEntity(entity)
+end
+
+-- Manage the bounce of the entity on the y axis
+-- Change the entity movement vector to reflects the new movement after the bounced
+-- Return the new x and y of the entity after the bounce
+
+function EntityMovement:bounceY(entity)
+    local dx = self.coordinates.x
+    local dy = -self.coordinates.y
+
+    self:setEntityMovement({ x = dx, y = dy })
+    return self:moveEntity(entity)
 end
 
 return EntityMovement

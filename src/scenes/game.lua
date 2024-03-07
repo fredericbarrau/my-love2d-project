@@ -49,34 +49,33 @@ function Game:update(dt)
 
         -- Check the collision with the player 1
         if Player1:hasCollision(next_position, Ball) then
-            -- Bounce the ball : reverse the x & y direction of the movement vector
-            Ball.current_movement:setEntityMovement(
-                {
-                    x = -Ball.current_movement.coordinates.x,
-                    y = -Ball.current_movement.coordinates.y
-                })
+            -- Bounce the ball
+            local bounced_position_x, bounced_position_y = Ball.current_movement:bounceY(Ball)
+            Ball:setX(bounced_position_x)
             -- the y position is restrained by the racket (we don't want to go through the racket)
-            Ball:setX(next_position.x)
             if next_position.y < Player1.y then
                 Ball:setY(Player1:getBallCenterPosition(Ball.radius).y)
             else
-                Ball:setY(next_position.y)
+                Ball:setY(bounced_position_y)
             end
 
             -- Check the collision with the player 2
         elseif Player2:hasCollision(next_position, Ball) then
-            -- Bounce the ball : reverse the x & y directions of the movement vector
-            Ball.current_movement:setEntityMovement({
-                x = -Ball.current_movement.coordinates.x,
-                y = -Ball.current_movement.coordinates.y
-            })
+            -- Bounce the ball
+            local bounced_position_x, bounced_position_y = Ball.current_movement:bounceY(Ball)
+            Ball:setX(bounced_position_x)
+
             -- the y position is restrained by the racket (we don't want to go through the racket)
-            Ball:setX(next_position.x)
             if next_position.y > Player2.y then
                 Ball:setY(Player2:getBallCenterPosition(Ball.radius).y)
             else
-                Ball:setY(next_position.y)
+                Ball:setY(bounced_position_y)
             end
+            -- Check the colision with the left and right of the screen
+        elseif next_position.x < 0 or next_position.x > Ball.max_x then
+            -- Bounce the ball
+            local bounced_position_x, bounced_position_y = Ball.current_movement:bounceX(Ball)
+            Ball:setX(bounced_position_x):setY(bounced_position_y)
             -- Check the colision with the top and bottom of the screen
         elseif next_position.y < 0 then
             Ball.state = BallState.START
