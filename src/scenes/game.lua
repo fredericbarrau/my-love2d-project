@@ -17,13 +17,14 @@ function Game:load()
     Player1:init(1)
     Player2:init(2)
 
+    -- Who starts ?
     self.current_starter = Player1
-    -- Initial setup for Player1
-
+    -- Who's the one in control of the ball ?
+    self.current_launcher = self.current_starter
     -- Initial player setup
-    Player1:setBallLauncher(true)
-    self.current_launcher = Player1
+    self.current_launcher:setBallLauncher(true)
 
+    -- Setup the keys for the players
     Player2:setKeys("a", "z")
 
     -- Initial setup for the ball
