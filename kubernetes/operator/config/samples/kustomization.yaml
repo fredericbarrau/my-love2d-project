@@ -1,4 +1,0 @@
-## Append samples of your project ##
-resources:
-- games_v1alpha1_pong.yaml
-#+kubebuilder:scaffold:manifestskustomizesamples
