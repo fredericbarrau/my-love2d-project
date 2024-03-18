@@ -9,4 +9,4 @@ metadata:
     app.kubernetes.io/created-by: pong-operator
   name: pong-sample
 spec:
-  # TODO(user): Add fields here
+  ballColor: blue
