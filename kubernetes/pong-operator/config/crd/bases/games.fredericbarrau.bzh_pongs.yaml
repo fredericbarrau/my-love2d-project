@@ -34,9 +34,8 @@ spec:
           spec:
             description: PongSpec defines the desired state of Pong
             properties:
-              foo:
-                description: Foo is an example field of Pong. Edit pong_types.go to
-                  remove/update
+              ballColor:
+                description: BallColor controls the color of the ball
                 type: string
             type: object
           status:
