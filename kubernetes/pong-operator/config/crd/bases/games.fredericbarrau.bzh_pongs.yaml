@@ -37,6 +37,11 @@ spec:
               ballColor:
                 description: BallColor controls the color of the ball
                 type: string
+              imageVersion:
+                description: Version of the pong application to deploy Use the image
+                  type of the controller runtime to specify the image version
+                pattern: ^pong:[0-9]+\.[0-9]+\.[0-9]+$
+                type: string
             type: object
           status:
             description: PongStatus defines the observed state of Pong

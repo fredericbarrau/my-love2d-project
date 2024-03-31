@@ -38,6 +38,8 @@ type PongReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+var default_pong_image = "pong:0.0.1" // TODO: this should be the default image for the pong application defined in the webhook
+
 //+kubebuilder:rbac:groups=games.fredericbarrau.bzh,resources=pongs,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=games.fredericbarrau.bzh,resources=pongs/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=games.fredericbarrau.bzh,resources=pongs/finalizers,verbs=update
@@ -71,6 +73,11 @@ func (r *PongReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	var replicas = int32(1)
 	var deploymentName = pong.Name + "-deployment"
+	var pong_image = default_pong_image
+
+	if pong.Spec.ImageVersion != "" {
+		pong_image = pong.Spec.ImageVersion
+	}
 
 	// Minimal Deployment spec, the rest will be handled by mutating webhooks (defaults, etc.)
 	var deployment appsv1.Deployment = appsv1.Deployment{
@@ -98,7 +105,7 @@ func (r *PongReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 					Containers: []corev1.Container{
 						{
 							Name:            "pong",
-							Image:           "pong:latest",
+							Image:           pong_image,
 							ImagePullPolicy: corev1.PullNever,
 						},
 					},
@@ -114,8 +121,18 @@ func (r *PongReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		}
 		// Deployment created successfully - don't requeue
 	} else {
-		//TODO: check if the color of the CDR matches the param provided to the image in the deployment. If not, update the deployment and restart it
 		log.Info("Deployment already exists", "Deployment.Namespace", deployment.Namespace, "Deployment.Name", deployment.Name)
+		//TODO: check if the color of the CDR matches the param provided to the image in the deployment. If not, update the deployment and restart it
+
+		// Check if the deployment is up to date regarding the image
+		if deployment.Spec.Template.Spec.Containers[0].Image != pong_image {
+			log.Info("Updating the Deployment", "Deployment.Namespace", deployment.Namespace, "Deployment.Name", deployment.Name)
+			deployment.Spec.Template.Spec.Containers[0].Image = pong_image
+			if err := r.Update(ctx, &deployment); err != nil {
+				log.Error(err, "Failed to update Deployment", "Deployment.Namespace", deployment.Namespace, "Deployment.Name", deployment.Name)
+				return ctrl.Result{}, err
+			}
+		}
 	}
 
 	// TODO : now we need to create a service for the deployment

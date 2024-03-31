@@ -30,6 +30,11 @@ type PongSpec struct {
 
 	// BallColor controls the color of the ball
 	BallColor string `json:"ballColor,omitempty"`
+	// Version of the pong application to deploy
+	// Use the image type of the controller runtime
+	// to specify the image version
+	// +kubebuilder:validation:Pattern=`^pong:[0-9]+\.[0-9]+\.[0-9]+$`
+	ImageVersion string `json:"imageVersion,omitempty"`
 }
 
 // PongStatus defines the observed state of Pong
