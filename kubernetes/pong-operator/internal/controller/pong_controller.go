@@ -29,6 +29,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	appsv1 "k8s.io/api/apps/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -107,6 +108,12 @@ func (r *PongReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 							Name:            "pong",
 							Image:           pong_image,
 							ImagePullPolicy: corev1.PullNever,
+							Ports: []corev1.ContainerPort{
+								{
+									ContainerPort: 80,
+									Name:          "http",
+								},
+							},
 						},
 					},
 				},
@@ -135,8 +142,39 @@ func (r *PongReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		}
 	}
 
-	// TODO : now we need to create a service for the deployment
-
+	// now we need to create a service for the deployment
+	var service = corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      pong.Name + "-service",
+			Namespace: req.Namespace,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(&pong, gamesv1alpha1.GroupVersion.WithKind("Pong")),
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Selector: map[string]string{
+				"app": pong.Name,
+			},
+			Type: corev1.ServiceTypeNodePort,
+			Ports: []corev1.ServicePort{
+				{
+					Name:       "http",
+					Port:       3000,
+					TargetPort: intstr.FromInt(80),
+				},
+			},
+		},
+	}
+	if err := r.Get(ctx, client.ObjectKey{Namespace: req.Namespace, Name: service.Name}, &service); err != nil {
+		log.Info("Creating a new Service", "Service.Namespace", service.Namespace, "Service.Name", service.Name)
+		if err := r.Create(ctx, &service); err != nil {
+			log.Error(err, "Failed to create new Service", "Service.Namespace", service.Namespace, "Service.Name", service.Name)
+			return ctrl.Result{}, err
+		}
+		// Service created successfully - don't requeue
+	} else {
+		log.Info("Service already exists", "Service.Namespace", service.Namespace, "Service.Name", service.Name)
+	}
 	return ctrl.Result{}, nil
 }
 
@@ -146,5 +184,6 @@ func (r *PongReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&gamesv1alpha1.Pong{}).
 		Owns(&appsv1.Deployment{}). // Create watches for the Deployment which has its controller owned reference
+		Owns(&corev1.Service{}).    // Create watches for the Deployment which has its controller owned reference
 		Complete(r)
 }
