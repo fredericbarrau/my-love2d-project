@@ -14,7 +14,7 @@ This is a simple Love2D project for playing around the Love 2D framework. It is 
 
 1. Install Love2D from https://love2d.org/
 2. Navigate to the project directory in your terminal.
-3. Run the command `love .`
+3. Run the command `make run` to start the game.
 
 Please ensure you have Love2D installed and correctly set up in your PATH before running the game.
 
@@ -24,12 +24,11 @@ To build the game, you can use the `love-release` tool. Install it using the com
 
 ## Build the Game to HTLM5
 
-To build the game to HTML5, you can use the `love.js` tool. Install it using the command `npm install -g love.js`.
+To build the game to HTML5, you can use the [love.js](https://github.com/Davidobot/love.js) tool. Install it using the command `npm install -g love.js`.
 Then:
 
 ```bash
-# "cd" into the project directory
-npx love.js -m 64202210 -t Pong -c $PWD $PWD/build
+make build
 ```
 
 This will create a `build` directory with the HTML5 version of the game.
@@ -37,8 +36,7 @@ This will create a `build` directory with the HTML5 version of the game.
 To run it using a Docker container, you can use the following command:
 
 ```bash
-docker build . -t pong
-docker run -p 8080:80 pong
+make docker-build
 ```
 
 Then, open your browser and navigate to `http://localhost:8080/` to play the game.
