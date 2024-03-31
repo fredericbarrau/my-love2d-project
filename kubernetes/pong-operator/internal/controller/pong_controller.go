@@ -21,11 +21,15 @@ import (
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
+
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	gamesv1alpha1 "github.com/fredericbarrau/pong-made-with-love.git/api/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	appsv1 "k8s.io/api/apps/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // PongReconciler reconciles a Pong object
@@ -53,14 +57,75 @@ type PongReconciler struct {
 func (r *PongReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 
-	// TODO(user): your logic here
 	log.Info("Reconciling Pong")
+
+	// Fetch the pong instance
+	var pong gamesv1alpha1.Pong
+	if err := r.Get(ctx, req.NamespacedName, &pong); err != nil {
+		log.Error(err, "unable to fetch Pong instance")
+		// we'll ignore not-found errors, since they can't be fixed by an immediate
+		// requeue (we'll need to wait for a new notification), and we can get them
+		// on deleted requests.
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+
+	var replicas = int32(1)
+	var deploymentName = pong.Name + "-deployment"
+
+	// Minimal Deployment spec, the rest will be handled by mutating webhooks (defaults, etc.)
+	var deployment appsv1.Deployment = appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      deploymentName,
+			Namespace: req.Namespace,
+			OwnerReferences: []metav1.OwnerReference{
+				*metav1.NewControllerRef(&pong, gamesv1alpha1.GroupVersion.WithKind("Pong")),
+			},
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: &replicas,
+			Selector: &metav1.LabelSelector{
+				MatchLabels: map[string]string{
+					"app": pong.Name,
+				},
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"app": pong.Name,
+					},
+				},
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Name:            "pong",
+							Image:           "pong:latest",
+							ImagePullPolicy: corev1.PullNever,
+						},
+					},
+				},
+			},
+		},
+	}
+	if err := r.Get(ctx, client.ObjectKey{Namespace: req.Namespace, Name: deploymentName}, &deployment); err != nil {
+		log.Info("Creating a new Deployment", "Deployment.Namespace", deployment.Namespace, "Deployment.Name", deployment.Name)
+		if err := r.Create(ctx, &deployment); err != nil {
+			log.Error(err, "Failed to create new Deployment", "Deployment.Namespace", deployment.Namespace, "Deployment.Name", deployment.Name)
+			return ctrl.Result{}, err
+		}
+		// Deployment created successfully - don't requeue
+	} else {
+		//TODO: check if the color of the CDR matches the param provided to the image in the deployment. If not, update the deployment and restart it
+		log.Info("Deployment already exists", "Deployment.Namespace", deployment.Namespace, "Deployment.Name", deployment.Name)
+	}
+
+	// TODO : now we need to create a service for the deployment
 
 	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *PongReconciler) SetupWithManager(mgr ctrl.Manager) error {
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&gamesv1alpha1.Pong{}).
 		Owns(&appsv1.Deployment{}). // Create watches for the Deployment which has its controller owned reference
