@@ -5,9 +5,9 @@ local config = require("src.config")
 local Player = {
 	width = 100,
 	height = 12,
-	colorR = 255,
-	colorG = 255,
-	colorB = 255,
+	colorR = 1,
+	colorG = 1,
+	colorB = 1,
 	speed = 150,
 
 	margin_x = 5, -- invisible margin left and right of the pad
