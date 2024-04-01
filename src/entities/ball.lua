@@ -1,3 +1,8 @@
+-- The ball entity
+
+-- The game configuration
+local config = require("src.config")
+
 -- import the entityMovement library
 EntityMovement = require("src.entities.entity_movement")
 
@@ -13,9 +18,10 @@ Ball = {
     max_x = 0,
     max_y = 0,
     radius = 5,
-    colorR = 255,
-    colorG = 0,
-    colorB = 0,
+    colorR = config.BALL_COLOR_RED,
+    colorG = config.BALL_COLOR_GREEN,
+    colorB = config.BALL_COLOR_BLUE,
+    colorAlpha = config.BALL_COLOR_ALPHA,
     showMvmtVector = false, -- Show the vector of the movement (for aiming)
     state = BallState.START -- state of the ball (BallState.START, BallState.MOVING, BallState.OUT)
 }
@@ -32,7 +38,7 @@ function Ball:load(x, y)
 end
 
 function Ball:draw()
-    love.graphics.setColor(self.colorR, self.colorG, self.colorB)
+    love.graphics.setColor(self.colorR, self.colorG, self.colorB, self.colorAlpha)
     love.graphics.circle("fill", self.x, self.y, self.radius)
 end
 
@@ -63,7 +69,7 @@ function Ball:launched(control_player)
         -- for now, it is static, but it will be dynamic, using the current
         -- position of the player and the racket current movement
 
-        self.current_movement:setEntityMovement( { x = 2, y = 2 })
+        self.current_movement:setEntityMovement({ x = 2, y = 2 })
         self.state = BallState.MOVING
     end
 end

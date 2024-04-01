@@ -1,3 +1,6 @@
+-- Load the game config
+local config = require("src.config")
+
 -- Player entity
 local Player = {
 	width = 100,
