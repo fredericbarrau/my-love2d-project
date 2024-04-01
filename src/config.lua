@@ -9,7 +9,15 @@ function config:isBrowser()
   return os.getenv("PONG_LOCAL") == "" or os
 end
 
-function config:getPlaygroundMaxHeigh()
+function config:getPlaygroundMinHeight()
+  return self["PLAYGROUND_Y"]
+end
+
+function config:getPlaygroundMinWidth()
+  return self["PLAYGROUND_X"]
+end
+
+function config:getPlaygroundMaxHeight()
   return self["PLAYGROUND_HEIGHT"] + self["PLAYGROUND_Y"]
 end
 
@@ -24,6 +32,10 @@ then
   config["BALL_COLOR_GREEN"] = 1
   config["BALL_COLOR_BLUE"] = 1
   config["BALL_COLOR_ALPHA"] = 1
+
+  -- Game is slower in the browser: increase the speed of the ball
+  config.BALL_VECTOR_SPEED_X = 4
+  config.BALL_VECTOR_SPEED_Y = 4
 else
   -- The color of the Ball
   local ball_color = os.getenv("PONG_BALL_COLOR") or '1,0,0,1';
@@ -38,6 +50,9 @@ else
   config["BALL_COLOR_GREEN"] = ball_color_array[1]
   config["BALL_COLOR_BLUE"] = ball_color_array[2]
   config["BALL_COLOR_ALPHA"] = ball_color_array[3]
+
+  config.BALL_VECTOR_SPEED_X = 2
+  config.BALL_VECTOR_SPEED_Y = 2
 end
 
 -- The size of the playground
@@ -48,9 +63,15 @@ config["PLAYGROUND_X"] = 0
 config["PLAYGROUND_Y"] = 0
 
 -- The playground color
-config["PLAYGROUND_COLOR_RED"] = 0
-config["PLAYGROUND_COLOR_GREEN"] = 0
-config["PLAYGROUND_COLOR_BLUE"] = 0
+config["PLAYGROUND_COLOR_RED"] = 0.1
+config["PLAYGROUND_COLOR_GREEN"] = 0.1
+config["PLAYGROUND_COLOR_BLUE"] = 0.1
 config["PLAYGROUND_COLOR_ALPHA"] = 1
+
+-- Panel Config
+config["PANEL_COLOR_RED"] = 0
+config["PANEL_COLOR_GREEN"] = 0
+config["PANEL_COLOR_BLUE"] = 0
+config["PANEL_COLOR_ALPHA"] = 1
 
 return config

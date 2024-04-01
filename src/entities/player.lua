@@ -1,5 +1,5 @@
 -- Load the game config
-local config = require("src.config")
+Config = require("src.config")
 
 -- Player entity
 local Player = {
@@ -34,13 +34,14 @@ function Player:init(player_num)
 	-- Player number
 	self.player_num = player_num
 	-- Min & Max X position for the horizontal mouvement
-	self.min_x      = self.margin_x
-	self.max_x      = love.graphics:getWidth() - self.width - self.margin_x
+	self.min_x      = self.margin_x + Config:getPlaygroundMinWidth()
+	self.max_x      = Config:getPlaygroundMaxWidth() - self.width - self.margin_x
 	-- Initial x & y position
-	self.x          = love.graphics:getWidth() / 2 - self.width / 2 + self.margin_x
+	self.x          = (Config:getPlaygroundMaxWidth() - Config:getPlaygroundMinWidth()) / 2 - self.width / 2 +
+	self.margin_x
 	self.y          = self.margin_x + self.height / 2
 	if self.player_num == 2 then
-		self.y = love.graphics:getHeight() - self.height - self.margin_y
+		self.y = Config:getPlaygroundMaxHeight() - self.height - self.margin_y
 		self:setKeys("q", "s")
 	end
 end

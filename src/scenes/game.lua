@@ -1,9 +1,14 @@
+-- Import the configuration
+Config = require("src.config")
+
 -- Import the player entity
 Player = require("src.entities.player")
 
 -- import the ball entity
 Ball = require("src.entities.ball")
 
+-- import the score panel entity
+Panel = require("src.entities.score_panel")
 
 -- Create a new game scene
 Game = {}
@@ -94,15 +99,25 @@ function Game:update(dt)
             Ball:setX(next_position.x):setY(next_position.y)
         end
     end
+    -- Update the panel
+    -- Panel:update(dt)
 end
 
 -- Draw the game scene
 function Game:draw()
+    -- Draw the playground
+    love.graphics.setColor(Config.PLAYGROUND_COLOR_RED, Config.PLAYGROUND_COLOR_GREEN, Config
+        .PLAYGROUND_COLOR_BLUE, Config.PLAYGROUND_COLOR_ALPHA)
+    love.graphics.rectangle('fill', Config.PLAYGROUND_X, Config.PLAYGROUND_Y, Config.PLAYGROUND_WIDTH,
+        Config.PLAYGROUND_HEIGHT)
+
     -- Draw the player
     Player1:draw()
     Player2:draw()
     -- Draw the ball
     Ball:draw()
+    -- Draw the panel
+    Panel:draw()
 end
 
 return Game

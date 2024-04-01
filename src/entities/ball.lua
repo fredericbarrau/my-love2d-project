@@ -30,8 +30,8 @@ Ball = {
 function Ball:load(x, y)
     self:setX(x):setY(y)
 
-    self.max_x = love.graphics.getWidth()
-    self.max_y = love.graphics.getHeight()
+    self.max_x = config:getPlaygroundMaxWidth()
+    self.max_y = config:getPlaygroundMaxHeight()
     self.current_movement =
         EntityMovement:new()
     self.current_movement:setEntityMovement({ x = 0, y = 0 })
@@ -69,7 +69,7 @@ function Ball:launched(control_player)
         -- for now, it is static, but it will be dynamic, using the current
         -- position of the player and the racket current movement
 
-        self.current_movement:setEntityMovement({ x = 2, y = 2 })
+        self.current_movement:setEntityMovement({ x = config.BALL_VECTOR_SPEED_X, y = config.BALL_VECTOR_SPEED_Y })
         self.state = BallState.MOVING
     end
 end
