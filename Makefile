@@ -54,6 +54,14 @@ build-html5: install-html5-deps ## Build the HTML5 target.
 	@rm -rf ${PWD}/build/* ${PWD}/tmp/build/*
 	@cp -r src *.lua tmp
 	@npx love.js -m $(HTML5_PACKAGE_SIZE) -t Pong -c ${PWD}/tmp ${PWD}/tmp/build
+	@echo "Setup HTML5 customization..."
+	@cd ${PWD}/tmp/build && node ${PWD}/src/lib/jsApiPlayer/globalizeFS.js && cd -
+	@echo "Remove console.info from game.js"
+	@sed -i -e /console.info/d ${PWD}/tmp/build/game.js
+	@rm ${PWD}/tmp/build/game.js-e
+	@cp ${PWD}/src/lib/jsApiPlayer/consolewrapper.js ${PWD}/src/lib/jsApiPlayer/webdb.js ${PWD}/tmp/build
+	@cp ${PWD}/src/static/index.html ${PWD}/tmp/build
+	@echo "Move to build folder"
 	@cp -r ${PWD}/tmp/build/* ${PWD}/build
 	@echo "Done. Build in 'build' folder. Run the HTML version with 'make docker-run'."
 

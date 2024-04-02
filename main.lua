@@ -1,3 +1,5 @@
+require "src.lib.jsApiPlayer.js"
+
 --  Debugging setup in visual studio code
 local lldebugger = false
 if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
@@ -11,6 +13,14 @@ function love.load(args)
    -- This function will run once at the beginning of the game.
    -- You can use it to load assets, initialize variables, etc.
    game:load()
+   -- Test of CallJS, should only work in the HTML5 version
+   JS.callJS(JS.stringFunc(
+      [[
+         var test = 5;
+         test+= 15;
+         console.log(test);
+      ]]
+   ))
 end
 
 function love.update(dt)
