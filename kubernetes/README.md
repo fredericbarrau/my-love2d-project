@@ -132,11 +132,17 @@ First install a cluster with kind:
 kind create cluster
 ```
 
-Then, build the image and deploy it to the cluster:
+Then, build the images of the operator and deploy it to the cluster:
 
 ```bash
 make docker-build
-kind load docker-image pong:latest
+kind load fredericbarrau.bzh/pong-operator:0.0.5
+# You will also need the image for the pong game; build it and load it
+cd ..
+make docker-build
+kind load fredericbarrau.bzh/pong:0.0.5
 ```
 
 **Note:** The `kind load` command is used to load the image into the kind cluster. This is a kind-specific command.
+
+Then `make deploy / make install` and install the samples as above.
