@@ -9,4 +9,5 @@ metadata:
     app.kubernetes.io/created-by: pong-operator
   name: pong-sample
 spec:
-  ballColor: blue
+  ballColor: 0,0,1,1
+  imageVersion: pong:0.0.7
