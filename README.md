@@ -28,7 +28,7 @@ To build the game to HTML5, you can use the [love.js](https://github.com/Davidob
 Then:
 
 ```bash
-make build
+make build-html5
 ```
 
 This will create a `build` directory with the HTML5 version of the game.
@@ -36,7 +36,7 @@ This will create a `build` directory with the HTML5 version of the game.
 To run it using a Docker container, you can use the following command:
 
 ```bash
-make docker-build
+make docker-build docker-run
 ```
 
 Then, open your browser and navigate to `http://localhost:8080/` to play the game.
