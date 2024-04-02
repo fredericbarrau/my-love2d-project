@@ -1,6 +1,9 @@
 -- Load the game config
 Config = require("src.config")
 
+-- Get the playground entity
+Playground = require("src.entities.playground")
+
 -- Player entity
 local Player = {
 	width = 100,
@@ -34,14 +37,14 @@ function Player:init(player_num)
 	-- Player number
 	self.player_num = player_num
 	-- Min & Max X position for the horizontal mouvement
-	self.min_x      = self.margin_x + Config:getPlaygroundMinWidth()
-	self.max_x      = Config:getPlaygroundMaxWidth() - self.width - self.margin_x
+	self.min_x      = self.margin_x + Playground:getX()
+	self.max_x      = Playground:getMaxX() - self.width - self.margin_x
 	-- Initial x & y position
-	self.x          = (Config:getPlaygroundMaxWidth() - Config:getPlaygroundMinWidth()) / 2 - self.width / 2 +
-	self.margin_x
-	self.y          = self.margin_x + self.height / 2
+	self.x          = Playground:getX() + Playground:getWidth() / 2 - self.width / 2 +
+			self.margin_x
+	self.y          = Playground:getY() + self.margin_x + self.height / 2
 	if self.player_num == 2 then
-		self.y = Config:getPlaygroundMaxHeight() - self.height - self.margin_y
+		self.y = Playground:getMaxY() - self.height - self.margin_y
 		self:setKeys("q", "s")
 	end
 end

@@ -7,6 +7,9 @@ Player = require("src.entities.player")
 -- import the ball entity
 Ball = require("src.entities.ball")
 
+-- Import the panel entity
+Playground = require("src.entities.playground")
+
 -- import the score panel entity
 Panel = require("src.entities.score_panel")
 
@@ -76,7 +79,7 @@ function Game:update(dt)
             else
                 Ball:setY(bounced_position_y)
             end
-            -- Check the colision with the left and right of the screen
+            -- Check the colision with the left and right of the playground
         elseif next_position.x < 0 or next_position.x > Ball.max_x then
             -- Bounce the ball
             local bounced_position_x, bounced_position_y = Ball.current_movement:bounceX(Ball)
@@ -106,10 +109,9 @@ end
 -- Draw the game scene
 function Game:draw()
     -- Draw the playground
-    love.graphics.setColor(Config.PLAYGROUND_COLOR_RED, Config.PLAYGROUND_COLOR_GREEN, Config
-        .PLAYGROUND_COLOR_BLUE, Config.PLAYGROUND_COLOR_ALPHA)
-    love.graphics.rectangle('fill', Config.PLAYGROUND_X, Config.PLAYGROUND_Y, Config.PLAYGROUND_WIDTH,
-        Config.PLAYGROUND_HEIGHT)
+    love.graphics.setColor(Playground.colorR, Playground.colorG, Playground.colorB, Playground.colorA)
+    love.graphics.rectangle('fill', Playground:getX(), Playground:getY(), Playground:getWidth(),
+        Playground:getHeight())
 
     -- Draw the player
     Player1:draw()

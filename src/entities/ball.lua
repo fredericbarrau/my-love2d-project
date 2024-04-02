@@ -1,18 +1,19 @@
 -- The ball entity
 
 -- The game configuration
-local config = require("src.config")
+local config   = require("src.config")
+Playground     = require("src.entities.playground")
 
 -- import the entityMovement library
 EntityMovement = require("src.entities.entity_movement")
 
-BallState = {
+BallState      = {
     START = 0,
     MOVING = 1,
     OUT = 2
 }
 
-Ball = {
+Ball           = {
     x = 0,
     y = 0,
     max_x = 0,
@@ -29,9 +30,10 @@ Ball = {
 -- Common methods for Love
 function Ball:load(x, y)
     self:setX(x):setY(y)
-
-    self.max_x = config:getPlaygroundMaxWidth()
-    self.max_y = config:getPlaygroundMaxHeight()
+    self.min_x = Playground:getX()
+    self.min_y = Playground:getY()
+    self.max_x = Playground:getMaxX()
+    self.max_y = Playground:getMaxY()
     self.current_movement =
         EntityMovement:new()
     self.current_movement:setEntityMovement({ x = 0, y = 0 })

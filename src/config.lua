@@ -9,22 +9,6 @@ function config:isBrowser()
   return os.getenv("PONG_LOCAL") == "" or os
 end
 
-function config:getPlaygroundMinHeight()
-  return self["PLAYGROUND_Y"]
-end
-
-function config:getPlaygroundMinWidth()
-  return self["PLAYGROUND_X"]
-end
-
-function config:getPlaygroundMaxHeight()
-  return self["PLAYGROUND_HEIGHT"] + self["PLAYGROUND_Y"]
-end
-
-function config:getPlaygroundMaxWidth()
-  return self["PLAYGROUND_WIDTH"] + self["PLAYGROUND_X"]
-end
-
 if config:isBrowser()
 then
   -- The color of the Ball, in the browser
@@ -54,13 +38,6 @@ else
   config.BALL_VECTOR_SPEED_X = 2
   config.BALL_VECTOR_SPEED_Y = 2
 end
-
--- The size of the playground
-config["PLAYGROUND_WIDTH"] = 400
-config["PLAYGROUND_HEIGHT"] = 400
--- The playground position
-config["PLAYGROUND_X"] = 0
-config["PLAYGROUND_Y"] = 0
 
 -- The playground color
 config["PLAYGROUND_COLOR_RED"] = 0.1
