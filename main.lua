@@ -7,7 +7,7 @@ end
 
 local game = require("src/scenes/game")
 
-function love.load()
+function love.load(args)
    -- This function will run once at the beginning of the game.
    -- You can use it to load assets, initialize variables, etc.
    game:load()

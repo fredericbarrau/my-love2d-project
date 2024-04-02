@@ -28,16 +28,21 @@ function Game:load()
     -- Who starts ?
     self.current_starter = Player1
     -- Who's the one in control of the ball ?
-    self.current_launcher = self.current_starter
+    self.current_ball_owner = self.current_starter
     -- Initial player setup
-    self.current_launcher:setBallLauncher(true)
+    self.current_ball_owner:setBallLauncher(true)
 
     -- Setup the keys for the players
     Player2:setKeys("a", "z", "lshift")
 
     -- Initial setup for the ball
-    local ball_initial_position = self.current_launcher:getBallCenterPosition(Ball.radius)
+    local ball_initial_position = self.current_ball_owner:getBallCenterPosition(Ball.radius)
     Ball:load(ball_initial_position.x, ball_initial_position.y)
+
+    -- Define new event
+    love.handlers.scored = function(player)
+        Panel:manageScore(player)
+    end
 end
 
 -- Update the game scene
@@ -47,7 +52,7 @@ function Game:update(dt)
     Player2:update(dt, Ball)
 
     -- Update the ball, return the next ball position
-    local next_position = Ball:update(dt, self.current_launcher)
+    local next_position = Ball:update(dt, self.current_ball_owner)
     if Ball.state == BallState.START then
         -- The ball is stuck on a player racket
         -- set the ball position
@@ -79,24 +84,30 @@ function Game:update(dt)
             else
                 Ball:setY(bounced_position_y)
             end
-            -- Check the colision with the left and right of the playground
-        elseif next_position.x < 0 or next_position.x > Ball.max_x then
+            -- Check the colision with the left and right of the allowed position of the ball
+        elseif next_position.x < Ball.min_x or next_position.x > Ball.max_x then
             -- Bounce the ball
             local bounced_position_x, bounced_position_y = Ball.current_movement:bounceX(Ball)
             Ball:setX(bounced_position_x):setY(bounced_position_y)
             -- Check the colision with the top and bottom of the screen
-        elseif next_position.y < 0 then
+        elseif next_position.y < Ball.min_y then
+            -- Trigger the event to update the score
+            love.event.push("scored", Player2)
+
             Ball.state = BallState.START
-            -- Who's the one in control of the ball ?
-            self.current_launcher = Player1
+            -- Who's the one in control of the ball now ?
+            self.current_ball_owner = Player1
             -- Initial player setup
-            self.current_launcher:setBallLauncher(true)
+            self.current_ball_owner:setBallLauncher(true)
         elseif next_position.y > Ball.max_y then
+            -- Trigger the event to update the score
+            love.event.push("scored", Player1)
+
             Ball.state = BallState.START
             -- Who's the one in control of the ball ?
-            self.current_launcher = Player2
+            self.current_ball_owner = Player2
             -- Initial player setup
-            self.current_launcher:setBallLauncher(true)
+            self.current_ball_owner:setBallLauncher(true)
         else
             -- Set the next position of the ball
             Ball:setX(next_position.x):setY(next_position.y)

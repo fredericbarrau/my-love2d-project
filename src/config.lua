@@ -40,10 +40,10 @@ else
 end
 
 -- The playground color
-config["PLAYGROUND_COLOR_RED"] = 0.1
-config["PLAYGROUND_COLOR_GREEN"] = 0.1
-config["PLAYGROUND_COLOR_BLUE"] = 0.1
-config["PLAYGROUND_COLOR_ALPHA"] = 1
+config["PLAYGROUND_COLOR_RED"] = 0.2
+config["PLAYGROUND_COLOR_GREEN"] = 0.2
+config["PLAYGROUND_COLOR_BLUE"] = 0.2
+config["PLAYGROUND_COLOR_ALPHA"] = 2
 
 -- Panel Config
 config["PANEL_COLOR_RED"] = 0
