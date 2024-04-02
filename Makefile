@@ -1,5 +1,5 @@
 # Size of the assets in bytes for the HTML5 version.
-HTML5_PACKAGE_SIZE=20000000
+HTML5_PACKAGE_SIZE=130000000
 
 # Listening port for the Docker container, when running the HTML5 version.
 DOCKER_PORT=8080
